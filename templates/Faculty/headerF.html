@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <title>Admin page</title>
+  <script src=
+  "https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js">
+      </script>
+  <!-- bootstrap ref -->
+  <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css">
+
+  <link rel="stylesheet" href="/static/css/FacultyStyle.css">
+    <!-- for icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"> 
+
+    <!-- For dismiable alert-->
+    
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <style>
+      #pic{
+      border: dotted 5px white;
+      border-radius: 142px;
+      padding: 6px 8px 6px 30px;
+      text-decoration: none;
+      font-size: 20px;
+      color: white;
+      display: block;
+      background: green;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+      outline: none;
+    }
+    h2{
+      border: 5px solid #c3b0b0;
+      border-radius: 5px;
+      margin: 20px 9px 10px 40px;
+      background-color: white;
+      padding-left: 18px;
+
+    }
+    .active i{
+      background-color: #ffff;
+      color: black;
+      font-weight: bold;
+      border-radius: 1px;
+      border: 2px solid yellow;
+    }
+    
+  </style>
+</head>
+<body>
+
+ <div class="sidenav">
+    <div id="pic"> {% if zprn %}
+            <li> ZPRN: {{ zprn }}</li>
+              {% else %}
+            <li><a href="/faculty/">Login</a></li>
+          {% endif %}   
+    </div>
+    <Br>
+    <Br>   
+
+    <a href="/faculty/home/" class="{% if request.path == '/faculty/home/' %} active {% endif %}" >
+      <i class="fas fa-tachometer-alt"> Dashboard </i>
+    </a> 
+
+    {% if request.resolver_match.url_name == 'editSub' %}
+    <a href="#"     class="active">    <i class="fa fa-edit"> Edit Subject Exam</i>
+    </a>
+    
+    {% else %}
+    <a href="/faculty/add-exam-category" class="{% if request.path == '/faculty/add-exam-category/' %} active {% endif %}" ><i class="fa fa-plus">
+      Add & edit Exam</i>
+    </a>
+          
+    {% endif %}
+
+    
+    {% if request.resolver_match.url_name == 'editSub' %}
+    <a href="#"     class="active">    <i class="fa fa-edit"> Edit Subject Exam</i>
+    </a>
+    
+    {% else %}
+    <a href="/faculty/selectSub" class="{% if request.path == '/faculty/selectSub/' %} active {% endif %}" ><i class="fa fa-plus">
+      Add & edit Questions</i>
+    </a>
+          
+    {% endif %}
+
+    {% comment %} /faculty/selectSub/
+
+    <a href="/faculty/selectSub" class="{% if request.path == '/faculty/selectSub/' %} active {% endif %}" > <i class="fa fa-plus"> </i>
+      Add & edit Question </a> 
+      {% endcomment %}
+
+
+    <a href="#">All exam results</a>
+    <a href="#">Help <i class="fa fa-help"></i> </a>
+    <a href="/faculty/logout"><i class="fa fa-remove"></i> Logout</a>
+    {% comment %}
+    <a href="VerifyCandidate.php">verify candidate <span id="sms"></span></a>
+    <a href="/faculty/logout"><i class="fa fa-remove"></i> Logout</a> {% endcomment %}
+</div>

@@ -1,0 +1,336 @@
+/*Style for onlineEX*/
+.main {
+    width: 100%;
+    background: linear-gradient(to top, rgba(14, 0, 0, 0.5) 30%, rgba(22, 4, 4, 0.5) 30%), url(/static/img/indexbg.jpeg);
+    background-position: center;
+    background-size: cover;
+    height: 109vh;
+}
+
+.navbar{
+    width: 1200px;
+    height: 75px;
+    margin: auto;
+
+}
+
+.sus{
+    color: green;
+}
+
+.logo{
+    color: #ff7200;
+    font-size: 35px;
+    font-family: Arial;
+    padding-left: 10px;
+    float:left;
+    padding-top: 10px;
+}
+
+.menu{
+    width: 500px;
+    float: left;
+    height: 70px;
+    
+}
+
+ul{
+    float: left;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+ul li{
+    list-style: none;
+    margin-left: 47px;
+    margin-top: 27px;
+    font-size: 15px;
+}
+ul li a{
+    text-decoration: none;
+    color: #ffff;
+    font-family: Arial;
+    font-weight: bold;
+    transition: 0.4s ease-in-out;
+}
+
+ul li a:hover{
+    color: #ff7200;
+}
+
+.search{
+    width:330px;
+    /* height: 10px; */
+    float: left;
+    margin-left: 129px;
+    margin-top: 1px;
+
+}
+
+.srch{
+    font-family: 'Times New Roman';
+    width: 200px;
+    height: 40px;
+    background: transparent;
+    border: 1px solid orange;
+    margin-top: 13px;
+    color: white;
+    border-right: none;
+    font-size: 16px;
+    float: left;
+    padding: 10px;
+    border-bottom-left-radius: 5px;
+    border-top-left-radius: 5px;
+}
+
+.btn{
+    width: 100px;
+    height: 40px;
+    background: #ff7200;
+    border: 2px solid #ff7200;
+    margin-top: 13px;
+    color: white;
+    font-size: 15px;
+    border-bottom-right-radius: 5px;
+
+}
+
+.btn:focus{
+    outline: none;
+
+}
+
+.icon a{
+    text-decoration: none;
+    color: #fff;
+
+
+}
+
+.icon ion-icon{
+    color: #f1eaea;
+    font-size: 30px;
+    padding-left: 14px;
+    padding-top: 5px;
+    transition: 0.3s ease;
+    
+}
+.icon .link{
+    height: 10px;
+    width: 10px;
+}
+
+.icon .fb:hover{
+    color: blue;
+}
+.icon .go:hover{
+    color: #d4a9d0d8;   
+}
+.icon .insta:hover{
+    color: #f005d8d8;
+}
+.icon .link:hover{
+    color: blue;
+}
+.icon .whatapp:hover{
+    color: green;
+}
+.icon .youtube:hover{
+    color: red;
+}
+
+
+
+
+
+/* // for social media account */
+/* 
+.fa {
+    padding: 20px;
+    padding-left: 16px;
+    font-size: 30px;
+    width: 30px;
+    height: 18px;
+    text-align: center;
+    text-decoration: none;
+    margin: 5px 2px;
+    border-radius: 50%;
+    border-color: rgb(247, 244, 244);
+  }
+.fa:hover {
+    opacity: 0.7;
+    background-color: #4d24e0;
+
+} */
+
+.content{
+    width: 1200px;
+    height: auto;
+    margin: auto;
+    color: white;
+    position: relative;
+
+}
+
+.content .para{
+    padding-left: 20px;
+    padding-bottom: 25px;
+    font-family: Arial;
+    letter-spacing: 1.2px;
+    line-height: 20px;
+}
+
+.content h1{
+    font-family: 'Times New Roman';
+    font-size: 50px;
+    padding-left: 20px;
+    margin-top: 9%;
+    letter-spacing: 2px;
+}
+
+.content .cn{
+    width: 160px;
+    height: 40px;
+    background: #ff7200;
+    border: none;
+    margin-bottom: 10px;
+    margin-left: 20px;
+    font-size: 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: .4s ease;
+}
+
+.content .cn a{
+    text-decoration: none;
+    color: #141414;
+    transition: .3s ease;
+}
+
+.cn:hover{
+    background-color: white;
+}
+
+.content  span{
+    color: #00ff9d;
+    font-size: 60px;
+    
+}
+
+.form{
+    width: 300px;
+    height: 425px;
+    background: linear-gradient(to top, rgb(0,0,0,0.8)50%, rgba(24, 23, 23, 0.8)50%);
+    position: absolute;
+    
+    top: 70px;
+    left: 516px;
+    border-radius: 10px;
+    padding: 25px;
+}
+
+.form h2{
+    width: 220px;
+    font-family: sans-serif;
+    text-align: center;
+    color: orange;
+    font-size: 22px;
+    background-color: #fff;
+    border-radius: 10px;
+    margin: 2px;
+    padding: 8px;
+
+}
+
+.form input{
+    width: 240px;
+    height: 35px;
+    background: transparent;
+    border-bottom: 1px solid #ff7200;
+    border-left: none;
+    border-right: none;
+    color: #fff;
+    font-size: 15px;
+    letter-spacing: 1px;
+    margin-top: 30px;
+    font-family: sans-serif;
+
+
+}
+
+
+#error {
+    color: rgb(245, 63, 63);
+    font-size: 20px;
+    /* font-weight: bold; */
+    background-color: rgba(224, 127, 89, 0);
+    /* display: none; */
+    /* margin-top: 5px; Adjust as needed */
+}
+
+.form input:focus{
+    outline: none;
+}
+
+::placeholder{
+    color: #fff;
+    font-family: Arial;
+    
+}
+
+.btnn{
+    width: 240px;
+    height: 40px;
+    background: #ff7200;
+    border: none;
+    margin-top: 30px;
+    font-size: 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    color: #fff;
+
+}
+
+.btnn:hover{
+    background: #fff;
+    color: #ff7200;
+
+}
+
+.btnn a{
+    text-decoration: none;
+    color: #141414;
+    font-weight: bold;
+
+}
+.form .forgot{
+    text-decoration: none;
+    color: orange;
+    font-weight: bold;
+    float: right;
+    font-size: 14px;
+}
+.form .forgot:hover{
+    color: blue;
+
+}
+
+.form .singup:hover{
+    color: blue;
+}
+
+.form .link{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 17px;
+    padding-top: 20px;
+    text-align: center;
+
+}
+
+.form .link a{
+    text-decoration: none;
+    color: #ff7200;
+
+}
+
+

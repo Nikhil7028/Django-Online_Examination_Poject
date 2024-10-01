@@ -1,0 +1,18 @@
+.remain {
+    width: 90%;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0) 100%, rgba(0, 0, 0, 0) 100%), url('/static/img/Regibk.jpg');
+    background-position: center;
+    background-size: cover;
+    height: 109vh;
+    padding-left: 10%;
+}
+
+img{
+    height: 69px;
+    width: 319px;
+    top: 10px;
+    float: right;
+}
+.inre{
+    padding-left: 7%;
+}

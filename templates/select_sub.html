@@ -1,0 +1,48 @@
+
+{% include 'headerS.html' %}
+{% load custom_tags %}
+
+<div class="main">
+    <h2>Select subject </h2>
+    <div class="container">
+        <p>Select the subject </p>
+        <table class="table table-none">
+            <thead>
+                <tr>
+                    <th>Sr. no.</th>
+                    <th>subject</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                {% for sub in subs %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>
+                        <form action="{% url 'instruction' sub.id %}" method='GET' class='d-block'>
+                            <input type="submit" class="btn" style="font-weight: bold; color: white;background-color:{% get_color forloop.counter0 %}" "
+                                value= '{{ sub.Subject }} '
+                            />
+                        </form>
+                        
+                        
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+    </div>
+
+
+
+</div>
+
+<script type="text/javascript">
+    function clickfun(id) {
+        window.location.href = "instruction.php?subid="+ id;
+    }
+</script>
+</body>
+</html>
+<?php include'Footer.php'; ?>

@@ -1,0 +1,127 @@
+{% include 'faculty/headerF.html' %}
+
+<div class="main">
+    <h2>Add Exam</h2>
+    <div class="container">
+        <div class="content mt-3">
+            <div class="animated fadeIn">
+                <div class="mb-1" style="background-color: #f4f5f6;">
+                    <marquee  width='95%' direction='left' height='2%' style="padding: 1px 1px 1px 1px;" >
+                        <strong style="color:red;">Warning:</strong> If you click on     <button type='submit' class ='btn btn-danger'> Delete </button>  Button then subject will deleted without confirmation.
+                    </marquee>
+                </div>
+            
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <strong class="card-title">Add Exam Subject</strong>
+                            </div>
+                            <div class="card-body">
+                                <div class="login-form">
+                                    <form  method="post"> <!-- Update action to Django URL -->
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                            <label>New Subject</label>
+                                            <input type="text" class="form-control" name="sub"  
+                                             placeholder="Enter new subject" required>
+                                        </div>
+                                        <br>
+                                        <div class="form-group">
+                                            <label>Exam Time in Minutes</label>
+                                            <input type="number" class="form-control" name="time" placeholder="Enter exam time in minutes" required>
+                                        </div>
+                                        <br>
+                                        <button type="submit" class="btn btn-success btn-flat m-b-30 m-t-30" name="sub1">Add Subject</button>
+                                    </form>
+                                    <br>
+                                    {% comment %} Alert for add exam sub {% endcomment %}
+                                    {% if alert is not None %} 
+                                        <div class="alert alert-{{alert.cls}} alert-dismissible fade show" role="alert">
+                                            <strong>{{alert.mg}}</strong>: {{alert.desc}}
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                              <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                    {% endif %}
+                                    
+                                    
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-7">
+                       
+                        <div class="card">
+                            <div class="card-header">
+                                <strong class="card-title">Exam Category</strong>
+                            </div>
+                            {% if messages %}
+                                <div class="alert-messages d-inline">
+                                    {% for message in messages %}
+                                        <div class="alert {{ message.tags }} d-inline" style='color:Green;'>
+                                            {{ message }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+
+                            
+                            <div class="card-body">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Sr. No</th>
+                                            <th scope="col">Exam</th>
+                                            <th scope="col">Time in Min</th>
+                                            <th scope="col">Edit</th>
+                                            <th scope="col">Delete</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for sub in subdata %}
+                                        <tr>
+                                            <th scope="row">{{ forloop.counter }}</th>
+                                            <td>{{ sub.Subject }}</td>
+                                            <td>{{ sub.exam_time_min }}</td>
+                                            <td>
+                                                <form action="{% url 'editSub' sub.id %}" method='GET' class='d-inline'>
+                                                    <input type='submit' class ='btn btn-info' value='Edit'>
+                                                </form>
+                                                
+                                            </td> <!-- Use Django's URL template tag -->
+                                            <td>
+                                                <form action="{% url 'deletesub' sub.id %}" method='POST' class='d-inline'>
+                                                    {% csrf_token %}
+                                                    <input type='submit' class ='btn btn-danger' value='Delete'>
+                                                </form>
+                                            </td> <!-- Use Django's URL template tag -->
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                    {% if sub is not None %} 
+
+                                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                            <strong>Deleted</strong>: {{sub}} id deleted
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                              <span aria-hidden="true">&times;</span>
+                                            </button>
+                                          </div>
+                                    {% endif %}
+                                </table>
+                                
+                            </div>
+                        </div> 
+                    </div>
+                </div>
+            </div><!-- .animated -->
+        </div><!-- .content -->
+    </div>
+</div>
+
+
+</html>
+</body>

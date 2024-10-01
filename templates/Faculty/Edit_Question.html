@@ -1,0 +1,93 @@
+<!-- this page will edit the question -->
+{% include 'faculty/headerF.html' %}
+
+<div class="main">
+    <h2>Edit questions</h2>
+    {% if msg is not None %} 
+            <div class="alert alert-{{msg.cls}} alert-dismissible fade show" role="alert">
+                <strong>{{msg.mg}}</strong>: {{msg.desc}}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+    {% endif %}
+
+    <div class="container">
+        <div class="content mt-3">
+            <div class="animated fadeIn">
+                <div class="row">
+                    <div class="col-lg-11">
+                        <div class="card">
+                            <div class="card-header">
+                                <strong class="card-title">Edit question of ID <font color='green'>{{row.id}}</font></strong>
+                            </div>
+                            <div class="card-body">
+                                <div class="login-form"> 
+                                    {% if row is not none %}
+                                    <form action="" method="post" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                            <label>Add new question</label>
+                                            <textarea class="form-control" name="question" rows="2" cols="75" required>{{row.ques}}</textarea>
+                                        </div>
+                                        
+                                        <div class="form-group row mt-3">
+                                            <label class="col-sm-1 col-form-label">Image</label>
+                                            
+                                            <div class="col-sm-6">
+                                                <input type="file" class="form-control" name="img" accept="image/*" capture='user'>
+                                            </div>
+
+                                            <div class="col-sm-5">
+                                                Current img
+                                                <img src="/media/{{ row.img }}" alt="No image" class="img-fluid mb-2" style="max-width: 200px; height: 150px; border: 1px solid yellow;">
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label>Option 1</label>
+                                            <input type="text" class="form-control" name="opt1" value="{{row.opt1}}" required>
+                                        </div>
+                                        <br>
+                                        <div class="form-group">
+                                            <label>Option 2</label>
+                                            <input type="text" class="form-control" name="opt2" value="{{row.opt2}}" required>
+                                        </div>
+                                        <br>
+                                        <div class="form-group">
+                                            <label>Option 3</label>
+                                            <input type="text" class="form-control" name="opt3" value="{{row.opt3}}">
+                                        </div>
+                                        <br>
+                                        <div class="form-group">
+                                            <label>Option 4</label>
+                                            <input type="text" class="form-control" name="opt4" value="{{row.opt4}}">
+                                        </div>
+                                        <br>
+                                        <div class="form-group">
+                                            <label>Answer</label>
+                                            <input type="text" class="form-control" name="ans" value="{{row.ans}}" required>
+                                        </div>
+                                        <br>
+                                        <input type="submit" class="btn btn-success btn-flat m-b-30 m-t-30" value="update question" name="sub1">
+                                        <a href='{% url 'addQues' sid %}' class="btn btn-info btn-flat ps-8">Back</a>
+                                    </form>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div><!-- .animated -->
+        </div><!-- .content -->
+
+
+
+    </div>
+
+</div>
+
+
+</html>
+</body>

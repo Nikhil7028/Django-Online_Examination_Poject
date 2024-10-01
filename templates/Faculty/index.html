@@ -1,0 +1,90 @@
+<!-- This is home page or welcome page -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty | login</title>
+    
+	<!--   for alert bootstrap -->
+	<link rel='stylesheet' href = '/static/css/bootstrap.min.css'>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .main{
+            width: 100%;
+            background: linear-gradient(to top, rgba(14, 0, 0, 0.5)40%,rgba(22, 4, 4, 0.5)40%), url(/static/img/facultyLogin.jpg);
+            background-position: center;
+            background-size: cover;
+            height: 109vh;
+        }       
+        .active li{
+            background-color: black;
+            border-radius: 5px;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">   
+    <!-- upper line for home icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">  <!-- this is for social media icon -->
+
+</head>
+<body>
+    
+
+
+<div class="main">
+    <div class="navbar">
+        <div class="icon">
+            <h2 class="logo"> OnlineEx</h2>
+        </div>
+        <div class="menu">
+            <ul>
+                <u style="color: blue;" class="active"> <li> <a href="/faculty"> Home </a> </li> </u>
+                <u style="color: blue;"> <li> <a href="#">About</a> </li> </u>
+                <!-- <u style="color: blue;"> <li> <a href="#">Service</a> </li> </u> -->
+                <u style="color: blue;"> <li> <a href="/">student login</a> </li> </u>
+                <u style="color: blue;"> <li> <a href="http://localhost/onlineEx/follow01.php" target="_blank">Follow us</a> </li> </u>
+            </ul>
+        </div>
+
+        <div class="search">
+            <input class="srch"  type="search" name="" placeholder="Type to text">
+            <a href="#"><button class="btn ">Search</button></a>
+
+        </div>
+    </div>
+    <hr>
+    <div class="content">
+       
+        <div class="form">
+            <form  method="POST">
+                <h2> Faculty Login Here</h2>
+                {% csrf_token %}
+                <input type="text" name="zprn" placeholder="Enter ZPRN Here" required>
+                <input type="password" name="pass" placeholder="Enter Password Here" required>
+                <a href="#" class="forgot">Forgot password?</a>
+                <button class="btnn" type='submit'> Login </button>
+
+                <p class="link">Don't have an account  <br>
+                <a href="Register.php" class="singup"> Register </a>here </p>
+
+            </form>
+        </div>
+        
+                {% if error is not None %}
+                <div class ='alert alert-danger justify-center' role='alert'> <strong> ERROR: </strong>
+                    {{error}}
+                    </div>
+                {% endif %}
+
+
+    </div>
+
+    
+</div>
+
+
+    
+<!-- div for icon -->
+
+<!-- footer -->
+<?php include '../Footer.php'; ?>
