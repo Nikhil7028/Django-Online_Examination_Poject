@@ -145,7 +145,7 @@ def instruction(request, sid):
 #     return render(request, 'exam_paper.html', dict)
 
 
-# exam page realted function
+# exam page realted function  
 
 def exam_paper(request):
     user = request.user.username
