@@ -2,10 +2,14 @@ from django.shortcuts import redirect, render
 from django.http import HttpResponse
 from Student.models import StudInfo
 from Faculty.models import Exam_sub, Question
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from django.http import JsonResponse
 from django.conf import settings
+from django.contrib.sessions.models import Session
+
+
+from django.utils import timezone
 
 
 # Create your views here.
@@ -101,29 +105,92 @@ def selectSub(request):
     })
 
 # instruction page
-def instruction(request, sid):
-    if 'rollno' not in request.session:
-        return redirect('/')
+# def instruction(request, sid):
+#     if 'rollno' not in request.session:
+#         return redirect('/')
     
-    dict={}
+#     dict={}
+#     try:
+#         subs = Exam_sub.objects.get(id= sid)
+#         sn = subs.Subject
+#         time = subs.exam_time_min
+#         qcount = Question.objects.filter(sub= sn).count()
+#         attemp= True
+#         if qcount==0:
+#             attemp= False        
+
+#         # student info
+#         dict={
+#             'sn': sn, 'time': time, 'qcount':qcount , 'rollno': request.session['rollno'], 
+#             'sid': sid, 'attemp': attemp
+#         }
+#     except Exception as e:
+#         print(e)
+
+#     return render(request, 'instruction.html', dict)
+
+def instruction(request, sid):
+    # Ensure the user is logged in
+    if not request.session.get('rollno'):
+        return redirect('/')  # Redirect to login page if not logged in
+
+    # Fetch exam subject and time based on subject id
     try:
-        subs = Exam_sub.objects.get(id= sid)
-        sn = subs.Subject
-        time = subs.exam_time_min
-        qcount = Question.objects.filter(sub= sn).count()
-        attemp= True
-        if qcount==0:
-            attemp= False        
+        exam_subject = Exam_sub.objects.get(id=sid)
+    except Exam_sub.DoesNotExist:
+        Exam_sub.error(request, "Invalid Subject ID")
+        return redirect('select_sub')  # Redirect if subject does not exist
+    
+    # Store exam start flag in session
+    request.session['exam_start'] = 'yes'
+    
+    context = {
+        'user': request.session['rollno'],
+        'subject': exam_subject.Subject,
+        'exam_time': exam_subject.exam_time_min
+    }
+    
+    return render(request, 'instruction.html', context)
 
-        # student info
-        dict={
-            'sn': sn, 'time': time, 'qcount':qcount , 'rollno': request.session['rollno'], 
-            'sid': sid, 'attemp': attemp
-        }
-    except Exception as e:
-        print(e)
 
-    return render(request, 'instruction.html', dict)
+
+# set_exam_type_session
+
+def set_exam_type_session(request):
+    if request.method == "GET":
+        exam_category = request.GET.get('exam_category')
+
+        # Store exam_category in session
+        request.session['exam_category'] = exam_category
+
+        # Query the database for the exam subject
+        try:
+            # Get exam details from the database
+            exam_subject = Exam_sub.objects.get(Subject=exam_category)
+            exam_time = exam_subject.exam_time_min  # Duration in minutes
+
+            # Get the current time (timezone-aware)
+            start_time = timezone.localtime(timezone.now())  # Get local time based on TIME_ZONE
+
+            # Calculate the end time by adding the exam duration (in minutes)
+            end_time = start_time + timedelta(minutes=exam_time)
+
+            # Store end_time and exam duration in the session
+            request.session['end_time'] = end_time.strftime('%Y-%m-%d %H:%M:%S')
+            request.session['exam_start'] = True  # This can be used to track if the exam has started
+
+            # Optionally, store exam duration if you need it later
+            request.session['exam_duration'] = exam_time
+
+        # Return a success response (for an AJAX request or page load)
+            return JsonResponse({'status': 'success', 'message': 'Exam session set', 'end_time': request.session['end_time']})
+        except Exam_sub.DoesNotExist:
+            # Handle the case where the subject doesn't exist
+            return JsonResponse({'status': 'error', 'message': 'Exam category not found'})
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'})
+
+
 
 # for exam paper
 # def exampaper(request, sub):
@@ -148,28 +215,54 @@ def instruction(request, sid):
 # exam page realted function  
 
 def exam_paper(request):
+    sub= request.session['exam_category']
     user = request.user.username
+    
     sub = request.session.get('exam_category', None)
     
     if not sub:
         return redirect('index')  # Redirect to index if no category found
     
-    return render(request, 'examapp/exam_paper.html', {'user': user, 'sub': sub})
+    return render(request, 'exam_paper.html', {'user': user, 'sub': sub})
 
+    
 def load_total_que(request):
-    # Assuming you're calculating total questions dynamically
-    total_questions = 10  # Replace with your logic
-    return JsonResponse(total_questions, safe=False)
+    exam_category = request.session.get('exam_category')
+    if exam_category:
+        total_que = Question.objects.filter(sub=exam_category).count()
+    else:
+        total_que = 0  # Default to 0 if no exam category in session
+    return JsonResponse(total_que, safe=False)
 
 def load_questions(request):
     questionno = request.GET.get('questionno', 1)
     # Fetch question based on number
-    question = {
-        "id": questionno,
-        "text": "This is question {}".format(questionno),
-        "options": ["Option 1", "Option 2", "Option 3", "Option 4"]
-    }
+    subj = request.session.get('exam_category')
+
+    # Use get() if you are sure only one question exists for a given ques_no and sub
+    try:
+        ques = Question.objects.get(sub=subj, ques_no=questionno)
+        question = {
+            "id": ques.ques_no,
+            "text": ques.ques,
+            "image_url": ques.img if ques.img else None,
+            "options": [ques.opt1, ques.opt2, ques.opt3, ques.opt4]
+
+        }
+    except Question.DoesNotExist:
+        # Handle case where no question is found
+        question = {
+            "error": "Question not found"
+        }
+    except Exception as e:
+        question = {
+            "text": e
+        }
+    print(question['image_url'])
+
+
     return JsonResponse(question)
+
 
 def save_ans_in_session(request):
     questionno = request.GET.get('questionno')
@@ -177,10 +270,25 @@ def save_ans_in_session(request):
     request.session[f'answer_{questionno}'] = radiovalue
     return JsonResponse({'status': 'saved'})
 
-def load_timer(request):
-    # Implement timer logic, hardcoded here for demonstration
-    return JsonResponse('00:10:00', safe=False)
 
+def load_timer(request):
+    end_time = request.session.get('end_time', None)  # Retrieve end time from session
+    print('end timing')
+    print(end_time)
+
+    if not end_time:
+        return JsonResponse({"time": "00:00:00"})  # Return structured JSON with time
+
+    # Convert session end_time to datetime and calculate the difference
+    current_time = datetime.now()
+    end_time_obj = datetime.strptime(end_time, "%Y-%m-%d %H:%M:%S")
+    time_diff = (end_time_obj - current_time).total_seconds()
+
+    if time_diff <= 0:
+        return JsonResponse({"time": "00:00:00"})  # Time over
+    else:
+        remaining_time = datetime.utcfromtimestamp(time_diff).strftime("%H:%M:%S")
+        return JsonResponse({"time": remaining_time}) 
 
 def setSession(request, sub):
     try:
@@ -210,6 +318,7 @@ def setSession(request, sub):
 
 def logout(request):
     try:
+        Session.object.all().delete()
         del request.session['rollno']  # Replace 'key_name' with the actual key
         return redirect('/') 
     except :

@@ -46,7 +46,7 @@ urlpatterns = [
     path('instruction/<int:sid>/', stud_views.instruction, name='instruction'),
 
     # exam paper
-    path('exampaper/<str:sub>/', stud_views.exampaper, name='exampaper'),
+    path('exampaper/', stud_views.exam_paper, name='exampaper'),
     path('logout/', stud_views.logout, name='slogout'),
 
     # exam page realated urls
@@ -54,6 +54,8 @@ urlpatterns = [
     path('load_questions/', stud_views.load_questions, name='load_questions'),
     path('save_ans_in_session/', stud_views.save_ans_in_session, name='save_ans_in_session'),
     path('load_timer/', stud_views.load_timer, name='load_timer'),
+    path('set_exam_type_session/', stud_views.set_exam_type_session, name='set_exam_type_session'),
+
     
     path('faculty/logout/', fac_views.logout, name='flogout'),
     path('faculty/edit-que/<int:q_id>', fac_views.editQue, name='editQue'),

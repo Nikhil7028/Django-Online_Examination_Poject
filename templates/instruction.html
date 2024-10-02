@@ -1,7 +1,7 @@
 <!-- this is demo page for exam  -->
 <!-- select_exam.php -->
 
-<!DOCTYPE html>
+{% comment %} <!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -102,6 +102,72 @@
         }
         function backclick(){
             window.location="select_sub.php";
+        }
+    </script>
+
+</body>
+
+</html> {% endcomment %}
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam Instructions</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css">
+    <style>
+        .main {
+            margin: 9px 4px 5px 23px;
+            padding: 4px 5px 5px 8px;
+            border: 9px solid #c9cbc378;
+            border-radius: 15px;
+            border-bottom: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main">
+        <h2>Candidate: {{ user }}</h2>
+        <h3>Exam Instruction please read it carefully</h3>
+
+        <ul>
+            <li>This is an exam of <b>{{ subject }}</b> subject.</li>
+            <li>Exam time is <b>{{ exam_time }}</b> minutes.</li>
+            <li>One question carries one mark.</li>
+            <li>Start the exam by clicking on the <b>{{ subject }}</b> button.</li>
+        </ul>
+        <input type="checkbox" id="xyz" required>
+        <label>I read all the instructions and I agree with them.</label>
+
+        <br><br><br>
+        <div class="row1">
+            <div class="col-lg-6 col-lg-push-3" style="min-height: 500px; background-color: white;">
+
+                <button type="button" class="btn btn-dark" style="width: 105px;margin-top: 20px;" onclick="backclick();">Back</button>
+                <input type="button" class="btn btn-success" value="{{ subject }}" style="float:right;margin-top:20px;background-color:blue;color:white;width:140px;" onclick="set_exam_type_session('{{ subject }}');">
+
+            </div>
+        </div>
+        <a href="#"> dashboard</a>
+    </div>
+
+    <script type="text/javascript">
+        function set_exam_type_session(exam_category) {
+            fetch("{% url 'set_exam_type_session' %}?exam_category=" + exam_category)
+            .then(response => response.text())
+            .then(data => {
+                window.location = "{% url 'exampaper' %}";
+            });
+        }
+
+        function backclick() {
+            window.location = "{% url 'selectSub' %}";
         }
     </script>
 
