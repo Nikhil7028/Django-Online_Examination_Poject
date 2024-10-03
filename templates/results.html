@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam Paper</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css">
+    <style>
+        .main {
+            margin: 9px 4px 5px 130px;
+            padding: 4px 5px 5px 26px;
+            border: 9px solid #c9cbc378;
+            border-radius: 15px;
+            border-bottom: none;
+        }
+
+        .up {
+            font-size: 24px;
+            font-weight: bold;
+            border: 3px solid #f7086e;
+            background-color: #57d557;
+        }
+        .table {
+            border: 1px solid #000; /* Outer border */
+        }
+        .table th,
+        .table td {
+            border: none; /* Remove inner borders */
+        }
+        .table img {
+            width: 50%; /* Ensure the image is responsive */
+            max-height: 50%; /* Maintain aspect ratio */
+        }
+        .quesid{
+            font-size: 15px;
+
+        }
+        .ques{
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="up">
+        <ul>
+            <li><h1 style="text-align: center;">Exam result of " {{ subj }} "</h1></li>
+            <li style="display: inline; float:right; padding-right: 10px; padding-bottom: 10px;">
+                <b>Total question: </b> {{ ttlq }}
+        
+            </li>
+            <li><b>Attempt: </b> {{ attempq }} </li> 
+        </ul>
+    </div>
+    <div class="main">
+
+    {% comment %} <form method="post">
+        {% csrf_token %}
+        
+        {% for ques in questions %}
+        <input type="hidden" name="quesid_{{ ques.id }}" value="{{ ques.id }}" />
+    
+        <table class="table table-bordered">
+            <tr>
+                <td>Q. {{ ques.ques_no }}</td>
+                <td colspan="3" class="quesid"> Ques ID: {{ ques.id }}</td>
+                <td></td>
+                <td colspan="4"> Ques setter: {{ ques.ques_setter }} </td>
+                <td colspan="3"></td>
+            </tr>
+            <tr>
+                <td rowspan="14"></td>
+                <td colspan="8" rowspan="4" class="ques"><b>Question{{ ques.ques }}</b></td>
+                <td colspan="6" rowspan="6" class="text-right">
+                    {% if ques.img %} <img src="/media/{{ ques.img }}" alt="Image"> {% endif %}
+                </td>
+            </tr>
+            <tr></tr>
+            <tr></tr>
+            <tr></tr>
+            <tr>
+                <td colspan="7" rowspan="2">
+                    selected answer:   {{ ques. }}
+                </td>
+                <td></td>
+            </tr>
+            <tr></tr>
+            <tr></tr>
+            <tr></tr>
+            <tr>
+                <td colspan="7" rowspan="2">
+                   Correct answer: 
+                </td>
+                <td></td>
+            </tr>
+            <tr></tr>
+            <tr></tr>
+            <tr></tr>
+            <tr>
+                {% if ques.opt3 %}
+                <td colspan="7" rowspan="2">
+                    <input type="radio" name="selected_opt_{{ ques.id }}" value="opt3">  {{ ques.opt3 }}
+                </td>
+                <td></td>
+                {% endif %}
+            </tr>
+            <tr></tr>
+            <tr></tr>
+            <tr>
+                {% if ques.opt4 %}
+                <td></td>
+                <td colspan="7" rowspan="2">
+                    <input type="radio" name="selected_opt_{{ ques.id }}" value="opt4">  {{ ques.opt4 }}
+                </td>
+                <td></td>
+                {% endif %}
+            </tr>
+        </table>
+        {% endfor %}
+        <button type="submit">ok </button>
+    </form> {% endcomment %}
+
+    <h1>Results for Roll No: {{ rollno }} (Subject: {{ subj }})</h1>
+
+
+
+
+
+
+    <div class="col-lg-14"><br>
+        {% if messages %}
+        <div class="alert-messages d-inline ">
+            {% for message in messages %}
+                <div class="alert {{ message.tags }} d-inline" style='color:Green;'>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+        <!-- <div class="col-th-lg" -->
+        <div class="card">
+            <div class="card-header">
+                <strong class="card-title">Exam subject <b style="color: green;"> {{ subj}} </b> </strong>
+            </div>
+            <div class="card-body">
+                <marquee  width='95%' direction='left' height='2%' style="padding: 1px 1px 1px 1px;" >
+                    <strong style="color:red;">Instruction:</strong>1.Don't refresh the page &nbsp;  2.After reading the question and answer click on      <button type='' class ='btn btn-success'> OK </button>  button and re login again
+                </marquee>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col">Sr.no</th>
+                            <th scope="col">Question ID </th>
+                            <th scope="col">Question</th>
+                            <th scope="col">Image</th>
+                            <th scope="col">Selected Ans </th>
+                            <th scope="col">Correct answer</th>
+                            <th scope="col">Result</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for result in results %}
+                        <tr>
+                            <th scope="row"> {{ forloop.counter }} </th>
+                            <td> {{ result.question.id }} </td>
+                            <td> {{ result.question.ques }} </td>
+                            <td>  <img src="/media/{{ result.question.img }}" alt="No image" width="150px" height="100px"> </td>
+                            
+                            <td> {{ result.selected_answer }} </td>
+                            <td> {{ result.correct_answer }} </td>
+                             <td>
+                                {% if result.selected_answer == result.correct_answer %}
+                                    <img src="/static/img/1.png" alt="Correct" width="48px" height="48px">
+                                {% else %}
+                                    <img src="/static/img/0.png" alt="Incorrect" width="48px" height="48px">
+                                {% endif %}
+                            </td>
+                            <td> 
+                                <form action="#" method='GET' class='d-inline'>
+                                <input type='submit' class ='btn btn-info' value='Report'>
+                                </form>
+                            </td>
+                            
+
+                        </tr>
+                    
+                        {% endfor %}
+                    </tbody>
+                    
+                </table>
+
+                <a href="{% url 'slogout' %}" class="btn btn-success text-right"> OK </a>
+                
+                
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    </div>
+    
+
+</body>
+</html>

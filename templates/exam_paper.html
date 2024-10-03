@@ -20,45 +20,109 @@
             border: 3px solid orange;
             background-color: wheat;
         }
+        .table {
+            border: 1px solid #000; /* Outer border */
+        }
+        .table th,
+        .table td {
+            border: none; /* Remove inner borders */
+        }
+        .table img {
+            width: 50%; /* Ensure the image is responsive */
+            max-height: 50%; /* Maintain aspect ratio */
+        }
+        .quesid{
+            font-size: 15px;
+
+        }
+        .ques{
+            font-size: 18px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
+    <h1 style="text-align: center;">Exam Paper</h1>
     <div class="up">
         <ul>
-            <li><b>Candidate: </b> {{ user }}</li>
+            <li><b>Candidate: </b> {{ rollno }}</li>
             <li style="display: inline; float:right; padding-right: 10px; padding-bottom: 10px;">
                 <b>Time: </b>
-                <div id="countdowntimer" style="display: inline; padding-right: 50px;"></div>
+                <div id="countdowntimer" style="display: inline; padding-right: 50px;">  </div>
             </li>
-            <li><b>Subject: </b> {{ sub }}</li>
+            <li><b>Subject: </b> {{ subj }}</li>
         </ul>
     </div>
 
     <div class="main">
-        <div class="row">
-            <div class="col-lg-6 col-lg-push-3">
-                <div class="row">
-                    <div class="col-lg-2 col-lg-push-10" style="float:right; font-weight:bold;">
-                        <div id="current_que" style="display: inline;">1</div>
-                        <div style="display: inline;">/</div>
-                        <div id="total_que" style="display: inline;">0</div>
-                    </div>
-                </div>
-
-                <div class="row" style="margin-top: 30px;">
-                    <div class="col-lg-10 col-lg-push-1" style="min-height: 300px; background-color: white;" id="load_questions"></div>
-                    
-                </div>
-
-
-                <div class="row" style="margin-top: 10px">
-                    <div class="col-lg-12 text-center">
-                        <input type="button" class="btn btn-warning" value="Previous" onclick="load_previous();">&nbsp
-                        <input type="button" class="btn btn-success" value="Next" onclick="load_next();">&nbsp
-                    </div>
-                </div>
-            </div>
-        </div>
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            {% for ques in questions %}
+            <input type="hidden" name="quesid_{{ ques.id }}" value="{{ ques.id }}" />
+        
+            <table class="table table-bordered">
+                <tr>
+                    <td>Q. {{ ques.ques_no }}</td>
+                    <td colspan="3" class="quesid"> Ques ID: {{ ques.id }}</td>
+                    <td></td>
+                    <td colspan="4"> Ques setter: {{ ques.ques_setter }} </td>
+                    <td colspan="3"></td>
+                </tr>
+                <tr>
+                    <td rowspan="14"></td>
+                    <td colspan="8" rowspan="4" class="ques"><b>{{ ques.ques }}</b></td>
+                    <td colspan="6" rowspan="6" class="text-right">
+                        {% if ques.img %} <img src="/media/{{ ques.img }}" alt="Image"> {% endif %}
+                    </td>
+                </tr>
+                <tr></tr>
+                <tr></tr>
+                <tr></tr>
+                <tr>
+                    <td colspan="7" rowspan="2">
+                        <input type="radio" name="selected_opt_{{ ques.id }}" value="{{ ques.opt1 }}"> a. {{ ques.opt1 }}
+                    </td>
+                    <td></td>
+                </tr>
+                <tr></tr>
+                <tr></tr>
+                <tr></tr>
+                <tr>
+                    <td colspan="7" rowspan="2">
+                        <input type="radio" name="selected_opt_{{ ques.id }}" value="{{ ques.opt2 }}"> b. {{ ques.opt2 }}
+                    </td>
+                    <td></td>
+                </tr>
+                <tr></tr>
+                <tr></tr>
+                <tr></tr>
+                <tr>
+                    {% if ques.opt3 %}
+                    <td colspan="7" rowspan="2">
+                        <input type="radio" name="selected_opt_{{ ques.id }}" value="{{ ques.opt3 }}"> c. {{ ques.opt3 }}
+                    </td>
+                    <td></td>
+                    {% endif %}
+                </tr>
+                <tr></tr>
+                <tr></tr>
+                <tr>
+                    {% if ques.opt4 %}
+                    <td></td>
+                    <td colspan="7" rowspan="2">
+                        <input type="radio" name="selected_opt_{{ ques.id }}" value="opt4"> d. {{ ques.opt4 }}
+                    </td>
+                    <td></td>
+                    {% endif %}
+                </tr>
+            </table>
+            {% endfor %}
+            <button type="submit">Submit</button>
+        </form>
+        
+        
     </div>
 
     <script type="text/javascript">
@@ -71,40 +135,7 @@
         let questionno = 1;
         load_questions(questionno);
 
-        function load_questions(questionno) {
-            document.getElementById("current_que").innerHTML = questionno;
-            fetch("{% url 'load_questions' %}?questionno=" + questionno)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-                        document.getElementById("load_questions").innerHTML = `<p>${data.error}</p>`;
-                    } else {
-                        let questionHtml = `<div style="display: flex; align-items: flex-start;">`;
         
-                        // Display image on the left if available
-                        if (data.image_url) {
-                            questionHtml += `<img src="${data.image_url}" alt="Question Image" style="width: 150px; height: auto; margin-right: 20px;">`;
-                        }
-        
-                        // Display question text and options on the right
-                        questionHtml += `<div>
-                                            <p><b>${data.text}</b></p>
-                                            <ul>`;
-                        data.options.forEach((option, index) => {
-                            questionHtml += `<li>
-                                                <input type="radio" name="option" value="${index + 1}"> ${option}
-                                             </li>`;
-                        });
-                        questionHtml += `</ul></div></div>`;
-        
-                        // Insert question and options into the HTML
-                        document.getElementById("load_questions").innerHTML = questionHtml;
-                    }
-        
-                    // Update the total number of questions
-                    load_total_que();
-                });
-        }
         
         
         

@@ -60,7 +60,7 @@
                         <a class="nav-link text-white" href="#"></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="old_exam_res.php">last results</a>
+                        <a class="nav-link text-white {% if request.path == '/old-exam-res/' %} active {% endif %}" href="{% url 'oldExamRes' %}"> last results</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-white" href="#"></a>

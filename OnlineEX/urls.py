@@ -48,6 +48,8 @@ urlpatterns = [
     # exam paper
     path('exampaper/', stud_views.exam_paper, name='exampaper'),
     path('logout/', stud_views.logout, name='slogout'),
+    path('result/', stud_views.result, name='result'),
+    path('old-exam-res/', stud_views.oldExamRes, name='oldExamRes'),
 
     # exam page realated urls
     path('load_total_que/', stud_views.load_total_que, name='load_total_que'),

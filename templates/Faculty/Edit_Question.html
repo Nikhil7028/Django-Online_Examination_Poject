@@ -65,8 +65,16 @@
                                         </div>
                                         <br>
                                         <div class="form-group">
-                                            <label>Answer</label>
+                                            <label>Select correct  option : </label>
+
                                             <input type="text" class="form-control" name="ans" value="{{row.ans}}" required>
+                                            {% comment %} <select name="ans" >      
+                                                <option value="{{row.ans}}"> {{row.ans}} </option>
+                                                <option value="opt1">Option 1</option>
+                                                <option value="opt2">option 2</option>
+                                                <option value="opt3">option 3</option>
+                                                <option value="opt4">Option 4</option>
+                                            </select> {% endcomment %}
                                         </div>
                                         <br>
                                         <input type="submit" class="btn btn-success btn-flat m-b-30 m-t-30" value="update question" name="sub1">

@@ -13,5 +13,13 @@ class StudInfo(models.Model):
     regDate = models.DateTimeField(auto_now_add=True)
     verifyStatus = models.BooleanField(default=False)
 
+class exam_result(models.Model):
+    rollno = models.CharField(max_length=10)
+    exam_sub = models.CharField(max_length=11)
+    total_ques = models.IntegerField()
+    correct_ans =  models.IntegerField()
+    wrong_ans = models.IntegerField()
+    exam_endtime = models.DateTimeField(auto_now_add=True)
+
 
 

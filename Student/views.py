@@ -1,7 +1,7 @@
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
-from Student.models import StudInfo
-from Faculty.models import Exam_sub, Question
+from Student.models import StudInfo, exam_result
+from Faculty.models import Exam_sub, Question, ExamSubmission
 from datetime import datetime, timedelta
 
 from django.http import JsonResponse
@@ -104,30 +104,6 @@ def selectSub(request):
         'color_count': color_count,
     })
 
-# instruction page
-# def instruction(request, sid):
-#     if 'rollno' not in request.session:
-#         return redirect('/')
-    
-#     dict={}
-#     try:
-#         subs = Exam_sub.objects.get(id= sid)
-#         sn = subs.Subject
-#         time = subs.exam_time_min
-#         qcount = Question.objects.filter(sub= sn).count()
-#         attemp= True
-#         if qcount==0:
-#             attemp= False        
-
-#         # student info
-#         dict={
-#             'sn': sn, 'time': time, 'qcount':qcount , 'rollno': request.session['rollno'], 
-#             'sid': sid, 'attemp': attemp
-#         }
-#     except Exception as e:
-#         print(e)
-
-#     return render(request, 'instruction.html', dict)
 
 def instruction(request, sid):
     # Ensure the user is logged in
@@ -215,17 +191,117 @@ def set_exam_type_session(request):
 # exam page realted function  
 
 def exam_paper(request):
-    sub= request.session['exam_category']
-    user = request.user.username
-    
-    sub = request.session.get('exam_category', None)
-    
-    if not sub:
-        return redirect('index')  # Redirect to index if no category found
-    
-    return render(request, 'exam_paper.html', {'user': user, 'sub': sub})
+    if not request.session.get('rollno'):
+        return redirect('/')  # Redirect to login page if not logged in
+    subj = request.session['exam_category']
+    questions = Question.objects.filter(sub=subj).order_by('ques_no')
+    rollno = request.session['rollno']
+
+    if request.method == 'POST':        
+        for ques in questions:
+            selected_option = request.POST.get(f'selected_opt_{ques.id}')  # Adjust to match your radio button names
+            if selected_option:
+                # Save to ExamSubmission
+                ExamSubmission.objects.create(
+                    rollno=rollno,
+                    ques_id=ques.id,
+                    selected_ans=selected_option,
+                    exam_sub = subj
+                )
+                print('Saved: Question ID:', ques.id, 'Selected Option:', selected_option)
+        
+        return redirect('result') 
+
+    return render(request, 'exam_paper.html', {'questions': questions,  'rollno': rollno, 'subj': subj})
+
+    # sub= request.session['exam_category']
+    # user = request.user.username
+    # sub = request.session.get('exam_category', None)
+    # if not sub:
+    #     return redirect('index')  # Redirect to index if no category found
+    # return render(request, 'exam_paper.html', {'user': user, 'sub': sub})
+# def result(request): 
+    if not request.session.get('rollno'):
+        return redirect('/')  # Redirect to login page if not logged in
+    rollno = request.session['rollno']
+    subj = request.session['exam_category']
+    examSubmit = ExamSubmission.objects.filter(exam_sub= subj, rollno= rollno).order_by('ques_id')
+    questions = Question.objects.filter( id__in=ExamSubmission.objects.filter(exam_sub=subj, rollno=rollno).values('ques_id') ).order_by('ques_no')
 
     
+    return render(request, 'results.html', {'rollno': rollno, 'subj': subj, 'questions': questions})
+
+# for result
+def result(request): 
+    if not request.session.get('rollno'):
+        return redirect('/')  # Redirect to login page if not logged in
+    
+    rollno = request.session['rollno']
+    subj = request.session['exam_category']
+
+    # Get the submitted answers for the given subject and roll number
+    exam_submissions = ExamSubmission.objects.filter(exam_sub=subj, rollno=rollno).order_by('ques_id')
+    
+    # Get the questions corresponding to those submissions
+    questions = Question.objects.filter(
+        id__in=exam_submissions.values('ques_id')
+    ).order_by('ques_no')
+
+    # Prepare a list of results combining questions and selected answers
+    results = []
+    try:
+        for question in questions:
+            
+            # Find the corresponding submission for the question
+            submission = exam_submissions.get(ques_id=question.id, rollno=rollno)
+            q = Question.objects.get(id = question.id)
+            
+            
+            results.append({
+                'question': question,
+                'selected_answer': submission.selected_ans,
+                'correct_answer': q.ans,  # Assuming this is the field name for the correct answer
+
+            })
+    except Exception as e:
+        print(e)
+        results.append({'error': str(e)})
+        
+    
+    # Count the number of attempted questions
+    attempq = len(results)
+    ttlq= Question.objects.filter(sub=  subj).count()
+
+    #insert the marks in result table
+    correctans = 0
+    for result in results:
+        if result.get('selected_answer') == result.get('correct_answer'):  # Correct dictionary access
+            correctans += 1
+
+    try :
+        # 'exam_sub', 'total_ques', 'correct_ans', 'wrong_ans', 'exam_endtime']  
+        erobj = exam_result(rollno=rollno, exam_sub=subj, total_ques=ttlq,  correct_ans= correctans, wrong_ans= ttlq - correctans ) 
+        erobj.save()
+    except Exception as e:
+        print(e)
+        results.append({'error': str(e)})
+
+    # delete the session
+    try:
+        del request.session['exam_category']  # delete the session exam category
+    except Exception as e :
+        print(e)
+     
+    return render(request, 'results.html', {
+        'rollno': rollno,
+        'subj': subj,
+        'results': results,
+        'attempq':  attempq,
+        'ttlq': ttlq
+
+    })
+
+
 def load_total_que(request):
     exam_category = request.session.get('exam_category')
     if exam_category:
@@ -312,6 +388,16 @@ def setSession(request, sub):
 
 
     
+def oldExamRes(request):
+    if not request.session.get('rollno'):
+        return redirect('/')
+    rollno = request.session['rollno']
+    sr= StudInfo.objects.get(rollNo= rollno)
+    sf = sr.firstName #student first name
+    sl = sr.lastName    #student last name
+    res = exam_result.objects.filter(rollno= rollno)
+
+    return render(request, 'old_exam_res.html', {'rollno': rollno, 'sf':sf, 'sl':sl, 'institute': sr.institute, 'course':sr.course, 'results': res })
 
 
 

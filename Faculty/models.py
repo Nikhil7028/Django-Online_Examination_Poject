@@ -1,4 +1,5 @@
 from django.db import models
+from Student.models import StudInfo
 # Create your models here.
 class FacultyLogin(models.Model):
     ZPRN = models.CharField(max_length=10, unique=True)
@@ -25,5 +26,12 @@ class Question(models.Model):
     ans = models.CharField(max_length=201)
     sub = models.CharField(max_length=11)
     ques_setter = models.CharField(max_length=51)
+
+class ExamSubmission(models.Model):
+    rollno = models.CharField(max_length=10)
+    ques_id = models.IntegerField()
+    selected_ans = models.CharField(max_length=200, default=None)
+    exam_sub = models.CharField(max_length=11)
+    submitted_at = models.DateTimeField(auto_now_add=True)
 
     
