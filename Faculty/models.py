@@ -26,6 +26,7 @@ class Question(models.Model):
     ans = models.CharField(max_length=201)
     sub = models.CharField(max_length=11)
     ques_setter = models.CharField(max_length=51)
+    full_name = models.CharField(max_length=50)
 
 class ExamSubmission(models.Model):
     rollno = models.CharField(max_length=10)

@@ -36,7 +36,8 @@ urlpatterns = [
 
     path('faculty/selectSub/', fac_views.selectSub, name= 'selectSub'), # to select the subject to add question
     path('faculty/add-question/<int:sub_id>/', fac_views.addQues, name='addQues'),
-    path('faculty/delete-que/<int:q_id>/', fac_views.deleteQue, name='deleteQue'),
+    path('faculty/delete-que/<int:q_id>/', fac_views.deleteQue, name='deleteQue'),    
+    path('faculty/all-exam-result/',fac_views.allExamRes, name= 'allExamRes'),
 
     # Student side
     path('', stud_views.login, name='login'),   # student login

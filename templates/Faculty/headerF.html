@@ -92,16 +92,12 @@
           
     {% endif %}
 
-    {% comment %} /faculty/selectSub/
+    <a href="/faculty/all-exam-result/" class="{% if request.path == '/faculty/all-exam-result/' %} active {% endif %}" >
+      <i class="fa fa-file"> All exam results </i>
+    </a> 
 
-    <a href="/faculty/selectSub" class="{% if request.path == '/faculty/selectSub/' %} active {% endif %}" > <i class="fa fa-plus"> </i>
-      Add & edit Question </a> 
-      {% endcomment %}
-
-
-    <a href="#">All exam results</a>
-    <a href="#">Help <i class="fa fa-help"></i> </a>
-    <a href="/faculty/logout"><i class="fa fa-remove"></i> Logout</a>
+    <a href="#"><i class="fa fa-question"> Help </i> </a>
+    <a href="/faculty/logout"><i class="fa fa-power-off"></i> Logout</a>
     {% comment %}
     <a href="VerifyCandidate.php">verify candidate <span id="sms"></span></a>
     <a href="/faculty/logout"><i class="fa fa-remove"></i> Logout</a> {% endcomment %}

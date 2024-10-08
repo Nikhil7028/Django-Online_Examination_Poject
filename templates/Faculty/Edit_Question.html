@@ -32,17 +32,27 @@
                                         </div>
                                         
                                         <div class="form-group row mt-3">
-                                            <label class="col-sm-1 col-form-label">Image</label>
+                                            <label>Update Image</label>
                                             
                                             <div class="col-sm-6">
                                                 <input type="file" class="form-control" name="img" accept="image/*" capture='user'>
                                             </div>
-
-                                            <div class="col-sm-5">
-                                                Current img
-                                                <img src="/media/{{ row.img }}" alt="No image" class="img-fluid mb-2" style="max-width: 200px; height: 150px; border: 1px solid yellow;">
+                                        
+                                            <div class="col-sm-4">
+                                                <b>Current img</b>
+                                                {% if row.img %}
+                                                <a href="javascript:void(0);" id="remove-img"><i class='fas fa-trash-alt' style='font-size:20px;color:red'></i></a>
+                                                <div id="img-container">
+                                                    <img src="/media/{{ row.img }}" alt="No image" class="img-fluid mb-2" style="max-width: 200px; height: 150px; border: 1px solid yellow;">
+                                                    
+                                                    <input type="hidden" id="delete" name="remove" value="false">
+                                                </div>
+                                                {% else %}
+                                                <p>No image uploaded</p>
+                                                {% endif %}
                                             </div>
                                         </div>
+                                        
                                         
                                         <div class="form-group">
                                             <label>Option 1</label>
@@ -95,6 +105,24 @@
     </div>
 
 </div>
+<script>
+    // Get references to the elements
+        const removeImgLink = document.getElementById('remove-img');
+        const imgContainer = document.getElementById('img-container');
+        const deleteInput = document.getElementById('delete');
+
+        if (removeImgLink) {
+            // Add event listener to the trash icon
+            removeImgLink.addEventListener('click', function() {
+                // Hide the image container
+                imgContainer.style.display = 'none';
+                
+                // Set the value of the hidden input to "true" to indicate the image should be deleted
+                deleteInput.value = 'true';
+            });
+        }
+
+</script>
 
 
 </html>

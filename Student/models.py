@@ -14,7 +14,7 @@ class StudInfo(models.Model):
     verifyStatus = models.BooleanField(default=False)
 
 class exam_result(models.Model):
-    rollno = models.CharField(max_length=10)
+    stud_id = models.ForeignKey( StudInfo, on_delete=models.CASCADE) 
     exam_sub = models.CharField(max_length=11)
     total_ques = models.IntegerField()
     correct_ans =  models.IntegerField()

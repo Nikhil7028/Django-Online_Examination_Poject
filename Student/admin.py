@@ -7,7 +7,7 @@ class resAdmin(admin.ModelAdmin):
                    ]        
 
 class resuttblcls(admin.ModelAdmin):
-    list_display = ['id', 'rollno', 'exam_sub', 'total_ques', 'correct_ans', 'wrong_ans', 'exam_endtime']  
+    list_display = ['id', 'stud_id', 'exam_sub', 'total_ques', 'correct_ans', 'wrong_ans', 'exam_endtime']  
 
 admin.site.register(StudInfo, resAdmin)
 admin.site.register(exam_result, resuttblcls)

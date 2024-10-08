@@ -47,8 +47,9 @@
         <ul>
             <li><b>Candidate: </b> {{ rollno }}</li>
             <li style="display: inline; float:right; padding-right: 10px; padding-bottom: 10px;">
-                <b>Time: </b>
+                <b id='timetitle'>Time: </b>
                 <div id="countdowntimer" style="display: inline; padding-right: 50px;">  </div>
+
             </li>
             <li><b>Subject: </b> {{ subj }}</li>
         </ul>
@@ -67,7 +68,7 @@
                     <td>Q. {{ ques.ques_no }}</td>
                     <td colspan="3" class="quesid"> Ques ID: {{ ques.id }}</td>
                     <td></td>
-                    <td colspan="4"> Ques setter: {{ ques.ques_setter }} </td>
+                    <td colspan="4"> Ques setter: {{ ques.full_name }} </td>
                     <td colspan="3"></td>
                 </tr>
                 <tr>
@@ -126,51 +127,58 @@
     </div>
 
     <script type="text/javascript">
-        function load_total_que() {
-            fetch("{% url 'load_total_que' %}")
-                .then(response => response.json())
-                .then(data => document.getElementById("total_que").innerHTML = data);
-        }
-
-        let questionno = 1;
-        load_questions(questionno);
-
+              
         
         
         
-        
-
-        function load_previous() {
-            if (questionno > 1) {
-                questionno -= 1;
-                load_questions(questionno);
-            }
-        }
-
-        function load_next() {
-            questionno += 1;
-            load_questions(questionno);
-        }
 
         function timer() {
             fetch("{% url 'load_timer' %}")
-                .then(response => response.json())  // Parse the JSON response
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();  // Convert to JSON
+                })
                 .then(data => {
-                    document.getElementById("countdowntimer").innerHTML = data.time;  // Access the 'time' field
-        
-                    // Redirect to another page if time is up
-                    if (data.time === "00:00:00") {
+                    const countdownElement = document.getElementById("countdowntimer");
+                    countdownElement.innerHTML = data.time;  // Update the countdown timer
+                    
+                    // apply style if time is minimum
+                     // Split the time string to get hours, minutes, and seconds
+                     const timeParts = data.time.split(':');
+                     const hours = parseInt(timeParts[0], 10);
+                     const minutes = parseInt(timeParts[1], 10);
+                     const seconds = parseInt(timeParts[2], 10);
+                     
+                     // Calculate total remaining seconds
+                     const totalSeconds = (hours * 3600) + (minutes * 60) + seconds;
+ 
+                     // Apply styles based on remaining time
+                     if (totalSeconds < 20) {
+                        countdownElement.style.color = 'red';  // Change text color to red
                         
-                        window.location.href = "{% url 'selectSub' %}";  // Adjust URL as needed
+                         
+                         
+                     } else {
+                         countdownElement.style.color = '';  // Reset to default color
+                     }
+        
+                    // If the time is exactly 0:00:00, submit the form
+                    if (data.time === '0:00:00') {
+                        console.log("Time is up! Submitting the form.");
+                        document.querySelector("form").submit();
                     }
                 })
-                .catch(error => console.error('Error fetching timer:', error));  // Error handling
+                .catch(error => {
+                    console.error('Error fetching timer:', error);  // Log the error
+                });
         }
-        
-        // Set the timer to call every second
+              
+    
+        // Call the timer function every second
         setInterval(timer, 1000);
 
-        setInterval(timer, 1000);
     </script>
 </body>
 </html>

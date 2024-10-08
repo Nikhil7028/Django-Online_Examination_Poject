@@ -8,9 +8,7 @@ from django.http import JsonResponse
 from django.conf import settings
 from django.contrib.sessions.models import Session
 
-
 from django.utils import timezone
-
 
 # Create your views here.
 
@@ -53,7 +51,6 @@ def login(request):
             # Now check the ZPRN and password
             if strow.rollNo == rollno and strow.password == pwd: # Ideally, compare hashed passwords
                     request.session['rollno'] = strow.rollNo
-                    print('hi Nikhil')
                     return redirect('/home/')
             else:
                 data = {'error': 'Invalid rollno or password please try again'}
@@ -113,20 +110,26 @@ def instruction(request, sid):
     # Fetch exam subject and time based on subject id
     try:
         exam_subject = Exam_sub.objects.get(id=sid)
+        count_que= Question.objects.filter(sub= exam_subject.Subject).count()
+        flag = True
+        if count_que<1:
+            flag= False
     except Exam_sub.DoesNotExist:
         Exam_sub.error(request, "Invalid Subject ID")
         return redirect('select_sub')  # Redirect if subject does not exist
-    
     # Store exam start flag in session
     request.session['exam_start'] = 'yes'
-    
+
+        
     context = {
         'user': request.session['rollno'],
         'subject': exam_subject.Subject,
-        'exam_time': exam_subject.exam_time_min
+        'exam_time': exam_subject.exam_time_min,
+        'total_que': count_que,
+        'flag':flag,
     }
-    
     return render(request, 'instruction.html', context)
+
 
 
 
@@ -208,7 +211,6 @@ def exam_paper(request):
                     selected_ans=selected_option,
                     exam_sub = subj
                 )
-                print('Saved: Question ID:', ques.id, 'Selected Option:', selected_option)
         
         return redirect('result') 
 
@@ -221,16 +223,6 @@ def exam_paper(request):
     #     return redirect('index')  # Redirect to index if no category found
     # return render(request, 'exam_paper.html', {'user': user, 'sub': sub})
 # def result(request): 
-    if not request.session.get('rollno'):
-        return redirect('/')  # Redirect to login page if not logged in
-    rollno = request.session['rollno']
-    subj = request.session['exam_category']
-    examSubmit = ExamSubmission.objects.filter(exam_sub= subj, rollno= rollno).order_by('ques_id')
-    questions = Question.objects.filter( id__in=ExamSubmission.objects.filter(exam_sub=subj, rollno=rollno).values('ques_id') ).order_by('ques_no')
-
-    
-    return render(request, 'results.html', {'rollno': rollno, 'subj': subj, 'questions': questions})
-
 # for result
 def result(request): 
     if not request.session.get('rollno'):
@@ -279,8 +271,9 @@ def result(request):
             correctans += 1
 
     try :
-        # 'exam_sub', 'total_ques', 'correct_ans', 'wrong_ans', 'exam_endtime']  
-        erobj = exam_result(rollno=rollno, exam_sub=subj, total_ques=ttlq,  correct_ans= correctans, wrong_ans= ttlq - correctans ) 
+        # '
+        std_id= StudInfo.objects.get(rollNo=rollno)
+        erobj = exam_result(stud_id= std_id, exam_sub= subj, total_ques= ttlq,  correct_ans= correctans, wrong_ans= ttlq - correctans ) 
         erobj.save()
     except Exception as e:
         print(e)
@@ -348,23 +341,35 @@ def save_ans_in_session(request):
 
 
 def load_timer(request):
-    end_time = request.session.get('end_time', None)  # Retrieve end time from session
-    print('end timing')
-    print(end_time)
+    try:
+        # Retrieve 'end_time' from session and check if it exists
+        end_time_str = request.session.get('end_time')
+        if not end_time_str:
+            return JsonResponse({'error': 'End time not found in session'}, status=400)
+        
+        # Convert the session's string end_time back to a datetime object
+        end_time = datetime.fromisoformat(end_time_str)
+        
+        # Get the current time
+        current_time = datetime.now()
 
-    if not end_time:
-        return JsonResponse({"time": "00:00:00"})  # Return structured JSON with time
+        # Calculate the remaining time
+        remaining_time = end_time - current_time
+        
+        # If time has expired, set remaining_time to zero
+        if remaining_time.total_seconds() <= 0:
+            remaining_time = timedelta(seconds=0)
 
-    # Convert session end_time to datetime and calculate the difference
-    current_time = datetime.now()
-    end_time_obj = datetime.strptime(end_time, "%Y-%m-%d %H:%M:%S")
-    time_diff = (end_time_obj - current_time).total_seconds()
+        # Format the remaining time as HH:MM:SS
+        time_str = str(remaining_time).split('.')[0]  # Only take HH:MM:SS part
+        
+        return JsonResponse({'time': time_str})
+    
+    except Exception as e:
+        # Log the error for debugging
+        print(f"Error in load_timer: {e}")
+        return JsonResponse({'error': 'An unexpected error occurred'}, status=500)
 
-    if time_diff <= 0:
-        return JsonResponse({"time": "00:00:00"})  # Time over
-    else:
-        remaining_time = datetime.utcfromtimestamp(time_diff).strftime("%H:%M:%S")
-        return JsonResponse({"time": remaining_time}) 
 
 def setSession(request, sub):
     try:
@@ -395,7 +400,8 @@ def oldExamRes(request):
     sr= StudInfo.objects.get(rollNo= rollno)
     sf = sr.firstName #student first name
     sl = sr.lastName    #student last name
-    res = exam_result.objects.filter(rollno= rollno)
+    # res = exam_result.objects.filter(rollno= rollno)
+    res = exam_result.objects.filter(stud_id = sr ).order_by('-correct_ans')
 
     return render(request, 'old_exam_res.html', {'rollno': rollno, 'sf':sf, 'sl':sl, 'institute': sr.institute, 'course':sr.course, 'results': res })
 
@@ -404,9 +410,8 @@ def oldExamRes(request):
 
 def logout(request):
     try:
-        Session.object.all().delete()
         del request.session['rollno']  # Replace 'key_name' with the actual key
+        Session.object.all().delete()        
         return redirect('/') 
     except :
-        print('call')
         return redirect('/') 

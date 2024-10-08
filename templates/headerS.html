@@ -33,7 +33,7 @@
             background-color: blueviolet;
             font-weight: bold;
             border-radius: 3px;
-            border: 3px solid red;
+            border: 3px solid aquamarine;
           }
     </style>
 </head>
@@ -71,15 +71,27 @@
                     <li class="nav-item">
                         <a class="nav-link text-white" href="#"></a>
                     </li>
+
+                    <li class="nav-item bg-danger me-2" style="border-radius: 5px;">
+                        <a class="nav-link text-white" href="{% url 'slogout' %}"> <i class="fa fa-power-off"></i> logout</a>
+                    </li>
+                    
+                    
                     
 
                 </ul>
                 
                 
+                
             </div>
-            <div class="bg-danger">
-            <a class="nav-link text-white  float-left" href="{% url 'slogout' %}">logout</a>
-            </div>
+            <ul> 
+            
+        </ul>
+                
+            
+            {% comment %} <a class="nav-link text-white  float-left bg-danger" href="{% url 'slogout' %}">logout</a> {% endcomment %}
+        
+            
             
         </div>
     </nav>

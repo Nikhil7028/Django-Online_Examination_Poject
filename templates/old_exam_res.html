@@ -35,7 +35,7 @@
                                             {% for re in results  %}
                                                 <tr>
                                                     <th scope="row"> {{ forloop.counter }} </th>
-                                                    <td> {{ rollno }} </td>
+                                                    <td> {{ re.stud_id.rollNo }} </td>
                                                     <td> {{ re.exam_sub }} </td>
                                                     <td> {{ re.total_ques }} </td>
                                                     <td> {{ re.correct_ans }} </td>

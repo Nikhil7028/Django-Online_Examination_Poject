@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404, render, redirect, HttpResponseRedirect
 from django.http import HttpResponse
 from Faculty.models import *
+from Student.models import StudInfo, exam_result
 from django.contrib.auth import authenticate, login
 from django.contrib import messages  # To display error messages
 
@@ -121,49 +122,7 @@ def selectSub(request):
 
     return render(request, 'faculty/selectSub.html',{'zprn': zprn, 'rows': rows})
 
-# def addQues(request, sub_id):
-#     try:
-#         if request.session['ZPRN'] is None :
-#             return redirect('faculty/')
-#     except:
-#         return redirect('/faculty/')          # Check if the session variable exists
-#     zprn = request.session['ZPRN']  
-#     try:
-#         subrow= Exam_sub.objects.get(id= sub_id)
-#         sn = subrow.Subject
-#     except:
-#         sn=''
-#     records = Question.objects.filter(sub= sn)
-#     print(records)
-#     if request.method == 'POST':
-#         try:
-#             q = Question()
-#             count = Question.objects.filter(sub=sn).count()
-#             q.ques_no = count+1
-#             q.ques = request.POST.get('question')
-#             q.opt1 = request.POST.get('opt1')
-#             q.opt2 = request.POST.get('opt2')
-#             q.opt3 = request.POST.get('opt3')
-#             q.opt4 = request.POST.get('opt4')
-#             q.ans = request.POST.get('ans')
-#             q.img = None
-#             if len(request.FILES) !=0:
-#                 q.img = request.FILES['img']
-#             q.q_set = zprn
-#             q.save()
-#             # Question.objects.create(ques_no= ques_no, ques= ques, img= img, opt1= opt1, opt2= opt2, opt3= opt3, opt4= opt4, ans = ans,  sub=sn, ques_setter= q_set)
-#             alert= {
-#                 'cls': 'success', 'mg': 'Sucessfully', 'desc': 'Add question sucessfully'
-#             }
-#         except Exception as e:
-#             print(e)
-#             alert= { #' Something is Wrong..! question not added'
-#                 'cls': 'danger', 'mg': 'ERROR', 'desc': e
-#             }
-#         return render(request, 'faculty/Add_edit_que.html', {'zprn': zprn, 'subname': sn, 'rows': records, 'alert': alert})
 
-#     return render(request, 'faculty/Add_edit_que.html', {'zprn': zprn, 'subname': sn, 'rows': records })
-  
 def addQues(request, sub_id):
     try:
         if request.session['ZPRN'] is None:
@@ -207,6 +166,7 @@ def addQues(request, sub_id):
             q.ques_no = q_count+1
             q.sub = sn
             q.ques_setter = zprn
+            q.full_name = factLogin.object.get(ZPRN= zprn).FullName
             q.save()
             print(q)
 
@@ -260,12 +220,18 @@ def editQue(request, q_id):
             q.opt3 = request.POST.get('opt3')
             q.opt4 = request.POST.get('opt4')
             q.ans = request.POST.get('ans')
+            
 
             # Handle image upload
             if 'img' in request.FILES:
                 q.img = request.FILES['img']
+            elif request.POST.get('remove') == 'true':
+                q.img = None
+            
+
             
             q.ques_setter = zprn
+            q.full_name = FacultyLogin.objects.get(ZPRN= zprn).FullName
             q.save()
 
             alert = {
@@ -350,7 +316,18 @@ def deleteQue(request, q_id):
     # If not a POST request, you might want to render a confirmation page or similar
     return render(request, 'your_template.html', {'zprn': zprn, 'question_id': q_id})
 
-
+def allExamRes(request):
+    try:
+        if request.session['ZPRN'] is None:
+            return redirect('faculty/')
+    except KeyError:
+        return redirect('/faculty/')  # Redirect if session variable doesn't exist
+    zprn = request.session['ZPRN']
+    
+    results = exam_result.objects.select_related('stud_id').order_by('-correct_ans')
+    print(results)
+    return render(request, 'faculty/All_exam_result.html', {'zprn': zprn, 'rows': results, })
+   
 
 
 def logout(request):

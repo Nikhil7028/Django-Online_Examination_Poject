@@ -1,117 +1,3 @@
-<!-- this is demo page for exam  -->
-<!-- select_exam.php -->
-
-{% comment %} <!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Instruction | page</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
-    <style>
-        .main {
-            margin: 9px 4px 5px 23px;
-            padding: 4px 5px 5px 8px;
-            border: 9px solid #c9cbc378;
-            border-radius: 15px;
-            font-size: 20px;
-            border-bottom: none;
-        }
-    </style>
-</head>
-
-<body>
-    <div class="main">
-        <h2>Candidate roll No: <font style="color: blueviolet; font-weight: bold;">{{rollno}} </font></h2>
-        <h3>Exam Instruction please read it carefully</h3>
-        
-        <ul>
-            <li>This is exam of <b> {{sn}} subject. </b> </li>
-            <li>Exam time is<b>  {{time}} minute </b></li>
-            <li>Total questions : <b>  {{qcount}} </b></li>
-            <li>One question carry <b> one mark</b></li>
-            
-            <li> To Start the exam by click on <b>{{sn}}</b> button </li>
-        </ul>
-        <input type="checkbox" id="xyz" required> <label> I read all the instruction and i agree with it.</label>
-        <br><br><br>
-
-        <div class="row1">
-            
-            <div id= 'noattemp' style="display: none;">
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <strong>QuestionNotAdded</strong>: Sorry! you can't attemp the exam beacause question are not added in the exam
-                </div>
-            </div>
-            
-            <div class="col-lg-6 col-lg-push-3" style="min-height: 500px; background-color:white;">
-
-                    <a href="{% url 'selectSub' %}" class="btn btn-dark" style="width: 105px;margin-top:20px;" onclick="">Back</a>
-                    
-                    {% if attemp %}
-                        <form action="{% url 'exampaper' sn %}" method='GET' class='d-block'>
-                            <input type="submit" class="btn btn-info" value="{{sn}}" style="float:right;margin-top:20px; background-color:blue;color:white; " 
-                            value= '{{ sub.Subject }} '/>
-                        </form>                    
-                    {% else %}
-                    <script>
-                        document.getElementById('noattemp').style.display = 'block';
-                    </script>               
-                                       
-                        <input type="submit" class="btn btn-info disable" value="{{sn}}" style="float:right;margin-top:20px; background-color:blue;color:white; cursor: not-allowed;" 
-                        value= '{{ sub.Subject }} ' /> 
-                        
-                         
-                                         
-                    
-                    {% endif %}
-                    
-
-                    
-                    
-                    
-
-
-
-                <?php
-
-                }
-
-                ?>
-
-            </div>
-
-        </div>
-        <a href="Dami/dashboard.php"></a>
-    </div>
-
-    <script type="text/javascript">
-        function set_exam_type_session(exam_category) {
-            var xmlhttp = new XMLHttpRequest();
-            xmlhttp.onreadystatechange = function() {
-                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-
-                    window.location = "exam_paper.php";
-                }
-
-            };
-            xmlhttp.open("GET", "forajax/set_exam_type_session.php?exam_category=" + exam_category, true)
-            xmlhttp.send(null);
-        }
-        function backclick(){
-            window.location="select_sub.php";
-        }
-    </script>
-
-</body>
-
-</html> {% endcomment %}
-
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -139,7 +25,8 @@
         <ul>
             <li>This is an exam of <b>{{ subject }}</b> subject.</li>
             <li>Exam time is <b>{{ exam_time }}</b> minutes.</li>
-            <li>One question carries one mark.</li>
+            <li>Total questions : <b>  {{total_que}} </b></li>
+            <li>One question carries <b> one mark. </b> </li>
             <li>Start the exam by clicking on the <b>{{ subject }}</b> button.</li>
         </ul>
         <input type="checkbox" id="xyz" required>
@@ -147,10 +34,35 @@
 
         <br><br><br>
         <div class="row1">
+            <div id= 'noattemp' style="display: none;">
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>QuestionNotAdded</strong>: Sorry! you can't attemp the exam beacause question are not added in the subject
+                </div>
+            </div>
+
             <div class="col-lg-6 col-lg-push-3" style="min-height: 500px; background-color: white;">
 
-                <button type="button" class="btn btn-dark" style="width: 105px;margin-top: 20px;" onclick="backclick();">Back</button>
-                <input type="button" class="btn btn-success" value="{{ subject }}" style="float:right;margin-top:20px;background-color:blue;color:white;width:140px;" onclick="set_exam_type_session('{{ subject }}');">
+                <a href="{% url 'selectSub' %}" class="btn btn-dark" style="width: 105px;margin-top:20px;" onclick="">Back</a>
+
+                {% if flag %}
+                          <input type="submit" class="btn btn-info" value="{{subject}}" style="float:right;margin-top:20px; background-color:blue;color:white; "
+                            onclick="set_exam_type_session('{{ subject }}');"            value= '{{ sub.Subject }} '/>
+                                          
+                    {% else %}
+                    <script>
+                        document.getElementById('noattemp').style.display = 'block';
+                    </script>               
+                                       
+                        <input type="submit" class="btn btn-info disable"  style="float:right;margin-top:20px; background-color:blue;color:white; cursor: not-allowed;" 
+                        value= '{{ subject }} ' />
+                        
+                         
+                                         
+                    
+                    {% endif %}
+
+                {% comment %} <button type="button" class="btn btn-dark" style="width: 105px;margin-top: 20px;" onclick="backclick();">Back</button>
+                <input type="button" class="btn btn-success" value="{{ subject }}" style="float:right;margin-top:20px;background-color:blue;color:white;width:140px;" onclick="set_exam_type_session('{{ subject }}');"> {% endcomment %}
 
             </div>
         </div>
